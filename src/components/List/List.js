@@ -1,27 +1,38 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
+import PropTypes from 'prop-types';
 
 import ListItem from '../ListItem/ListItem';
-
-const List = props => {
-  const { items, onItemDelete } = props;
-  return (
-    <View style={styles.list}>
-      {items.map((place, i) => (
-        <ListItem
-          key={i}
-          placeName={place}
-          onItemPress={() => onItemDelete(i)}
-        />
-      ))}
-    </View>
-  );
-};
 
 const styles = StyleSheet.create({
   list: {
     width: '100%',
   },
 });
+
+const List = props => {
+  const { items, onItemSelect } = props;
+  return (
+    <View style={styles.list}>
+      {items.map(item => (
+        <ListItem
+          key={item.key}
+          placeName={item.placeName}
+          onItemPress={() => onItemSelect(item.key)}
+          imageSource={item.imageSource}
+        />
+      ))}
+    </View>
+  );
+};
+
+List.defaultProps = {
+  items: [],
+};
+
+List.propTypes = {
+  items: PropTypes.arrayOf(PropTypes.object),
+  onItemSelect: PropTypes.func.isRequired,
+};
 
 export default List;

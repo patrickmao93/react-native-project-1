@@ -1,58 +1,12 @@
-/**
- * @format
- * @flow
- */
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
-import React, { Component } from 'react';
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  Button,
-} from 'react-native';
-
-import List from './src/components/List//List';
+import List from './src/components/List/List';
 import ListInput from './src/components/ListInput/ListInput';
-
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
-  android:
-    'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
-
-type Props = {};
-export default class App extends Component<Props> {
-  state = {
-    places: [],
-  };
-
-  placeSubmitHandler = value => {
-    this.setState(prevState => {
-      return { places: prevState.places.concat(value) };
-    });
-  };
-
-  placeDeleteHandler = index => {
-    this.setState(prevState => {
-      return { places: prevState.places.filter((place, i) => i !== index) };
-    });
-  };
-
-  render() {
-    return (
-      <View style={styles.container}>
-        <ListInput onSubmit={this.placeSubmitHandler} />
-        <List
-          items={this.state.places}
-          onItemDelete={this.placeDeleteHandler}
-        />
-      </View>
-    );
-  }
-}
+import PlaceDetail from './src/components/PlaceDetail/PlaceDetail';
+import * as actions from './src/store/actions';
 
 const styles = StyleSheet.create({
   container: {
@@ -68,3 +22,53 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 });
+
+const App = props => {
+  const { addPlace, selectPlace, deletePlace, deselectPlace } = props;
+  const { places, selectedPlace } = props;
+  return (
+    <View style={styles.container}>
+      <PlaceDetail
+        selectedPlace={selectedPlace}
+        onClose={deselectPlace}
+        onDelete={deletePlace}
+      />
+      <ListInput onSubmit={addPlace} />
+      <List items={places} onItemSelect={selectPlace} />
+    </View>
+  );
+};
+
+App.defaultProps = {
+  selectedPlace: null,
+};
+
+App.propTypes = {
+  addPlace: PropTypes.func.isRequired,
+  selectPlace: PropTypes.func.isRequired,
+  deletePlace: PropTypes.func.isRequired,
+  deselectPlace: PropTypes.func.isRequired,
+  places: PropTypes.arrayOf(PropTypes.object).isRequired,
+  selectedPlace: PropTypes.shape({
+    key: PropTypes.number,
+    placeName: PropTypes.string,
+    imageSource: PropTypes.object,
+  }),
+};
+
+const mapStateToProps = state => {
+  return {
+    places: state.places.places,
+    selectedPlace: state.places.selectedPlace,
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  {
+    addPlace: actions.addPlace,
+    selectPlace: actions.selectPlace,
+    deletePlace: actions.deletePlace,
+    deselectPlace: actions.deselectPlace,
+  }
+)(App);

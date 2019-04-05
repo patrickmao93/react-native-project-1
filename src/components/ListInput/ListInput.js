@@ -1,5 +1,19 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TextInput, Button } from 'react-native';
+import PropTypes from 'prop-types';
+
+const styles = StyleSheet.create({
+  inputContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  placeInput: {
+    width: '70%',
+  },
+  placeButton: {
+    width: '30%',
+  },
+});
 
 const ListInput = ({ onSubmit }) => {
   const [inputValue, setInputValue] = useState('');
@@ -28,17 +42,8 @@ const ListInput = ({ onSubmit }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  inputContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  placeInput: {
-    width: '70%',
-  },
-  placeButton: {
-    width: '30%',
-  },
-});
+ListInput.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
+};
 
 export default ListInput;
