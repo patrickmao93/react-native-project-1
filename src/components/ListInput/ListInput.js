@@ -6,6 +6,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    width: '90%',
   },
   placeInput: {
     width: '70%',

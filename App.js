@@ -1,74 +1,58 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import {
+  createSwitchNavigator,
+  createBottomTabNavigator,
+  createAppContainer,
+} from 'react-navigation';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { Provider } from 'react-redux';
 
-import List from './src/components/List/List';
-import ListInput from './src/components/ListInput/ListInput';
-import PlaceDetail from './src/components/PlaceDetail/PlaceDetail';
-import * as actions from './src/store/actions';
+import configureStore from './src/store/configureStore';
+import AuthScreen from './src/screens/Auth/Auth';
+import HomeScreen from './src/screens/Home/Home';
+import PlacesScreen from './src/screens/Places/Places';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    paddingTop: 40,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    backgroundColor: '#F5FCFF',
-  },
-
-  listContainer: {
-    width: '100%',
-  },
-});
-
-const App = props => {
-  const { addPlace, selectPlace, deletePlace, deselectPlace } = props;
-  const { places, selectedPlace } = props;
-  return (
-    <View style={styles.container}>
-      <PlaceDetail
-        selectedPlace={selectedPlace}
-        onClose={deselectPlace}
-        onDelete={deletePlace}
-      />
-      <ListInput onSubmit={addPlace} />
-      <List items={places} onItemSelect={selectPlace} />
-    </View>
-  );
-};
-
-App.defaultProps = {
-  selectedPlace: null,
-};
-
-App.propTypes = {
-  addPlace: PropTypes.func.isRequired,
-  selectPlace: PropTypes.func.isRequired,
-  deletePlace: PropTypes.func.isRequired,
-  deselectPlace: PropTypes.func.isRequired,
-  places: PropTypes.arrayOf(PropTypes.object).isRequired,
-  selectedPlace: PropTypes.shape({
-    key: PropTypes.number,
-    placeName: PropTypes.string,
-    imageSource: PropTypes.object,
-  }),
-};
-
-const mapStateToProps = state => {
-  return {
-    places: state.places.places,
-    selectedPlace: state.places.selectedPlace,
-  };
-};
-
-export default connect(
-  mapStateToProps,
+const TabNavigator = createBottomTabNavigator(
   {
-    addPlace: actions.addPlace,
-    selectPlace: actions.selectPlace,
-    deletePlace: actions.deletePlace,
-    deselectPlace: actions.deselectPlace,
+    Home: HomeScreen,
+    Places: PlacesScreen,
+  },
+  {
+    defaultNavigationOptions: ({ navigation }) => ({
+      tabBarIcon: ({ focused, horizontal, tintColor }) => {
+        const { routeName } = navigation.state;
+        let iconName;
+        if (routeName === 'Home') {
+          iconName = `ios-home`;
+        } else if (routeName === 'Places') {
+          iconName = `ios-planet`;
+        }
+        return <Icon name={iconName} size={25} color={tintColor} />;
+      },
+    }),
+    tabBarOptions: {
+      activeTintColor: 'tomato',
+      inactiveTintColor: 'gray',
+    },
   }
-)(App);
+);
+
+const AppNavigator = createSwitchNavigator(
+  {
+    Auth: AuthScreen,
+    App: TabNavigator,
+  },
+  {
+    initialRouteName: 'Auth',
+  }
+);
+
+const store = configureStore();
+const AppContainer = createAppContainer(AppNavigator);
+
+const App = () => (
+  <Provider store={store}>
+    <AppContainer />
+  </Provider>
+);
+export default App;

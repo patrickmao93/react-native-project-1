@@ -48,16 +48,17 @@ const PlaceDetail = props => {
     onClose();
   };
 
+  console.log('selectedPlace', selectedPlace);
+
   return (
     <Modal
       onRequestClose={onClose}
-      visible={selectedPlace !== null}
+      visible={!!selectedPlace}
       animationType="slide"
     >
       <View style={styles.modalContainer}>
         {modalContent}
         <View>
-          {/* <Button title="Delete" color="red" onPress={deletePlaceHandler} /> */}
           <TouchableOpacity onPress={deletePlaceHandler}>
             <View style={styles.deleteButton}>
               <Icon size={30} name="ios-trash" color="red" />

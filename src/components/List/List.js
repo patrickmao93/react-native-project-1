@@ -6,7 +6,7 @@ import ListItem from '../ListItem/ListItem';
 
 const styles = StyleSheet.create({
   list: {
-    width: '100%',
+    width: '90%',
   },
 });
 
